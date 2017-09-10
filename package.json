@@ -1,0 +1,21 @@
+{
+  "name": "fgql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "graphql",
+    "functional"
+  ],
+  "author": "max.putilov@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "ramda": "^0.24.1",
+    "ramda-fantasy": "^0.8.0",
+    "request-promise-native": "^1.0.4",
+    "sprintf-js": "^1.1.1"
+  }
+}
