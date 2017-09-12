@@ -7,19 +7,18 @@ import {Reader, Future} from "ramda-fantasy";
 import { future, ReaderF, mapPromise, reshape } from "./future-utils";
 
 //////
-
-export interface Request {
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
-  url: string
-  headers?: { [key: string] : any }
-  qs?: { [key: string] : any }
-  body?: any
-};
-
 export interface RequestGet {
   url: string
   headers?: { [key: string] : any }
   qs?: { [key: string] : any }
+}
+
+export interface RequestPost extends RequestGet {
+  body?: any
+}
+
+export interface Request extends RequestPost {
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
 };
 
 export type RequestPromise = (request: Request) => Promise<any>;
@@ -33,8 +32,12 @@ export const requestPromise: RequestPromise = request =>
 
 export const request = mapPromise<Request, any>(requestPromise);
 
-const mergeMethod = method => R.merge({ method });
-export const get: ReaderF<RequestGet, any> = reshape(mergeMethod("GET"))(request);
+const requestMethod = method => reshape(R.merge({ method }))(request);
+export const get: ReaderF<RequestGet, any> = requestMethod("GET");
+export const post: ReaderF<RequestPost, any> = requestMethod("POST");
+export const put: ReaderF<RequestPost, any> = requestMethod("PUT");
+export const patch: ReaderF<RequestPost, any> = requestMethod("PATCH");
+export const del: ReaderF<RequestPost, any> = requestMethod("DELETE");
 
 
 
