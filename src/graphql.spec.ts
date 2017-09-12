@@ -1,6 +1,6 @@
 import { Reader } from "ramda-fantasy";
 import { reshape } from "./future-utils";
-import { gql2request, GQLRequestContext, HttpConfig } from "./graphql";
+import { gql2request, GQLRequestContext, HttpConfig, requestF } from "./graphql";
 import { request } from "./http";
 import { log, fmerge } from "./utils";
 import * as R from "ramda";
@@ -71,19 +71,13 @@ describe("graphql", () => {
       }
     };
 
-
-    gql2request
-      .chain(req =>
-        Reader(ctx => ({...req, url: ctx.request.provider}))
-      )
-      .map(log)
-      .map(request.run)
+    requestF(req => Reader(ctx => ({ ...req, url: ctx.request.provider })))
       .run(requestContext)
       .fork(
         err => {
           //unexpected url
           console.log(err);
-          expect(err.toString()).toBe("RequestError: Error: Invalid URI \"ip\"");
+          expect(err.toString()).toBe('RequestError: Error: Invalid URI "ip"');
           done();
         },
         res => {

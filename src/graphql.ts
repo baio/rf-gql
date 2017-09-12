@@ -3,42 +3,41 @@ import { request as requestN } from "request-promise-native";
 import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
-import {Reader, Future} from "ramda-fantasy";
+import { Reader, Future } from "ramda-fantasy";
 import { future, ReaderF, MapFun } from "./future-utils";
 import { request, RequestMethods } from "./http";
 
 export interface GQLRequest {
-  root: {[key: string] : any}
-  args: {[key: string] : any}
-  context: {[key: string] : any}
-  meta: any
+  root: { [key: string]: any };
+  args: { [key: string]: any };
+  context: { [key: string]: any };
+  meta: any;
 }
 
 export interface Request {
-  provider: string
-  method: RequestMethods
-  url: string
+  provider: string;
+  method: RequestMethods;
+  url: string;
 }
 
 export interface HttpConfig {
   //common base url for all requests
-  baseUrl: string
+  baseUrl: string;
   //mapping [service name] -> url
-  providers: {[key: string] : string}
+  providers: { [key: string]: string };
   // requests middleware
-  api: HttpApi
+  api: HttpApi;
 }
 
 export interface HttpApi {
-
-  getHeaders?: (request: GQLRequest) => {[key: string] : string};
+  getHeaders?: (request: GQLRequest) => { [key: string]: string };
 }
 
 export interface GQLRequestContext {
   //provider name, see config.providers
-  config: HttpConfig
-  request: Request
-  gqlRequest: GQLRequest
+  config: HttpConfig;
+  request: Request;
+  gqlRequest: GQLRequest;
 }
 
 /**
@@ -54,33 +53,27 @@ const join = (...paths: string[]) => urlJoin(...paths.filter(f => f));
  * @param {GQLRequestContext} `{request: {urlPattern, args}}`
  * @returns {string}
  */
-const getRequestUrl = ({request: {provider, url}, gqlRequest: {args}, config: { baseUrl, providers }}: GQLRequestContext) : string =>
-  join(
-    baseUrl,
-    providers[provider],
-    sprintf(url, R.merge({}, args))
-  );
+const getRequestUrl = ({
+  request: { provider, url },
+  gqlRequest: { args },
+  config: { baseUrl, providers }
+}: GQLRequestContext): string => join(baseUrl, providers[provider], sprintf(url, R.merge({}, args)));
 
 /**
  * Invoke api.getHeaders with request param
  *
  * @param {GQLRequestContext} {api: {getHeaders}, request}
  */
-const getRequestHeaders = ({config: {api: {getHeaders}}, gqlRequest}: GQLRequestContext) =>
+const getRequestHeaders = ({ config: { api: { getHeaders } }, gqlRequest }: GQLRequestContext) =>
   getHeaders ? getHeaders(request) : null;
 
-export const gql2request : Reader<GQLRequestContext, Request> =
-  Reader.of(url => headers => ({url, headers}))
-  .ap(Reader(getRequestUrl))
-  .ap(Reader(getRequestHeaders));
+export const gql2request: Reader<GQLRequestContext, Request> =
+  Reader.of(url => headers => ({ url, headers }))
+    .ap(Reader(getRequestUrl))
+    .ap(Reader(getRequestHeaders));
 
-/*
-export const requestF = (reader: Reader<GQLRequest>) : ReaderF<Request, any> =>
-  gql2request
-  .map(f)
-  .map(request.run);
-*/
-
+export const requestF = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<Request, any> =>
+  gql2request.chain(mapper).map(request.run);
 
 /*
 export type RequestM = FutureReader<GQLRequestContext, any>;
