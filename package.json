@@ -19,7 +19,8 @@
     "ramda-fantasy": "^0.8.0",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
-    "sprintf-js": "^1.1.1"
+    "sprintf-js": "^1.1.1",
+    "url-join": "^2.0.2"
   },
   "devDependencies": {
     "jasmine": "^2.8.0"

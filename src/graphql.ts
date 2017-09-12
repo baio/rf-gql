@@ -1,41 +1,52 @@
-import { join } from "path";
+import * as urlJoin from "url-join";
 import { request as requestN } from "request-promise-native";
 import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import {Reader, Future} from "ramda-fantasy";
 import { future, ReaderF } from "./future-utils";
+import { request, RequestMethods } from "./http";
 
-export interface GQLRequestParams {
+export interface GQLRequest {
   root: {[key: string] : any}
   args: {[key: string] : any}
   context: {[key: string] : any}
   meta: any
 }
 
-export type GQLRequest = GQLRequestParams & {urlPattern: string};
+export interface Request {
+  provider: string
+  method: RequestMethods
+  url: string
+}
 
 export interface HttpConfig {
   //common base url for all requests
   baseUrl: string
   //mapping [service name] -> url
   providers: {[key: string] : string}
+  // requests middleware
+  api: HttpApi
 }
 
 export interface HttpApi {
 
   getHeaders?: (request: GQLRequest) => {[key: string] : string};
-  //mapping [service name] -> url
-  //providers: {[key: string] : string}
 }
 
 export interface GQLRequestContext {
   //provider name, see config.providers
-  name: string
   config: HttpConfig
-  request: GQLRequest
-  api: HttpApi
+  request: Request
+  gqlRequest: GQLRequest
 }
+
+/**
+ * Remove empty paths from joined strings and then join rest.
+ *
+ * @param {...string[]} paths
+ */
+const join = (...paths: string[]) => urlJoin(...paths.filter(f => f));
 
 /**
  * Given urlPattern and request args, format pattern with fields from args.
@@ -43,11 +54,11 @@ export interface GQLRequestContext {
  * @param {GQLRequestContext} `{request: {urlPattern, args}}`
  * @returns {string}
  */
-const getRequestUrl = ({name, request: {urlPattern, args}, config: { baseUrl, providers }}: GQLRequestContext) : string =>
+const getRequestUrl = ({request: {provider, url}, gqlRequest: {args}, config: { baseUrl, providers }}: GQLRequestContext) : string =>
   join(
     baseUrl,
-    providers[name],
-    sprintf(urlPattern, R.merge({}, args))
+    providers[provider],
+    sprintf(url, R.merge({}, args))
   );
 
 /**
@@ -55,7 +66,7 @@ const getRequestUrl = ({name, request: {urlPattern, args}, config: { baseUrl, pr
  *
  * @param {GQLRequestContext} {api: {getHeaders}, request}
  */
-const getRequestHeaders = ({api: {getHeaders}, request}: GQLRequestContext) =>
+const getRequestHeaders = ({config: {api: {getHeaders}}, gqlRequest}: GQLRequestContext) =>
   getHeaders ? getHeaders(request) : null;
 
 export const gql2request : Reader<GQLRequestContext, Request> =

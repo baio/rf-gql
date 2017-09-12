@@ -1,4 +1,3 @@
-import { join } from "path";
 import * as req  from "request-promise-native";
 import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
@@ -17,8 +16,10 @@ export interface RequestPost extends RequestGet {
   body?: any
 }
 
+export type RequestMethods = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
 export interface Request extends RequestPost {
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+  method: RequestMethods
 };
 
 export type RequestPromise = (request: Request) => Promise<any>;

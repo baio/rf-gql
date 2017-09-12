@@ -5,7 +5,7 @@ describe("http", () => {
   it("request google (via request)", done => {
     const req: Request = {
       method: "GET",
-      url: "http://google.com"
+      url: "https://httpbin.org/ip"
     };
 
     request.run(req).fork(
@@ -22,7 +22,7 @@ describe("http", () => {
 
   it("request google (via get)", done => {
     const req: RequestGet = {
-      url: "http://google.com"
+      url: "https://httpbin.org/ip"
     };
 
     get.run(req).fork(
