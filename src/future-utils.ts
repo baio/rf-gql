@@ -19,8 +19,16 @@ export const future = (promise: Promise<any>) : Future =>
 export type MapFun<T1, T2> = ((x: T1) =>  T2);
 export type MapPromiseFun<T, R> = MapFun<T, Promise<R>>;
 export type MapPromise<T, R> = (f: MapPromiseFun<T, R>) => ReaderF<T, R>;
+/**
+ * Given map function which accepts some arg and returns prmise, returns new reader future monad, with env og type arg
+ *
+ * @param {any} f
+ */
 export const mapPromise: (<T, R>(f: MapPromiseFun<T, R>) => ReaderF<T, R>) = f =>
   Reader(compose(future, f));
-
+/**
+ * Given reader and map function, run map function on env and then returns new reader with env from map result.
+ * @param f
+ */
 export const reshape = <T1, T2>(f: MapFun<T1, T2>) => (reader: Reader<T1>) : Reader<T2> =>
   Reader(f).map(reader.run);

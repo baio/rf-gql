@@ -22,6 +22,12 @@ export interface Request extends RequestPost {
 };
 
 export type RequestPromise = (request: Request) => Promise<any>;
+
+/**
+ * Accepts request obj and retuns promise which run http request with resuest params.
+ *
+ * @param {Request} request
+ */
 export const requestPromise: RequestPromise = request =>
   req(request.url, {
       method: request.method,
@@ -30,6 +36,9 @@ export const requestPromise: RequestPromise = request =>
       json: true
   }).promise();
 
+/**
+ * Reader<Request, Future<any, any>>
+*/
 export const request = mapPromise<Request, any>(requestPromise);
 
 const requestMethod = method => reshape(R.merge({ method }))(request);
