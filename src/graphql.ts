@@ -4,7 +4,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import {Reader, Future} from "ramda-fantasy";
-import { future, ReaderF } from "./future-utils";
+import { future, ReaderF, MapFun } from "./future-utils";
 import { request, RequestMethods } from "./http";
 
 export interface GQLRequest {
@@ -73,6 +73,14 @@ export const gql2request : Reader<GQLRequestContext, Request> =
   Reader.of(url => headers => ({url, headers}))
   .ap(Reader(getRequestUrl))
   .ap(Reader(getRequestHeaders));
+
+/*
+export const requestF = (reader: Reader<GQLRequest>) : ReaderF<Request, any> =>
+  gql2request
+  .map(f)
+  .map(request.run);
+*/
+
 
 /*
 export type RequestM = FutureReader<GQLRequestContext, any>;
