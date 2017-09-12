@@ -1,4 +1,4 @@
-import { request, Request, requestPromise } from "./http";
+import { request, Request } from "./http";
 
 describe("http", () => {
 
@@ -9,23 +9,16 @@ describe("http", () => {
       url: "http://google.com"
     };
 
-    console.log(requestPromise);
-    //request.run(req);
-
-    done();
-
-    /*
-    .fork(
+    request.run(req).fork(
       err => {
         expect(err).toBeNull();
         done();
       },
       res => {
         expect(res).toBeTruthy();
+        done();
       }
     );
-    */
-
 
   });
 

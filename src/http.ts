@@ -1,5 +1,5 @@
 import { join } from "path";
-import { request as requestN } from "request-promise-native";
+import * as req  from "request-promise-native";
 import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
@@ -18,15 +18,14 @@ export interface Request {
 
 export type RequestPromise = (request: Request) => Promise<any>;
 export const requestPromise: RequestPromise = request =>
-  requestN({
-      uri: request.url,
+  req(request.url, {
       method: request.method,
       headers: request.headers,
       qs: request.qs,
       json: true
   }).promise();
 
-//export const request = toFutureReader<Request, any>(requestPromise);
+export const request = mapPromise<Request, any>(requestPromise);
 
 
 
