@@ -72,7 +72,7 @@ export const gql2request: Reader<GQLRequestContext, Request> =
     .ap(Reader(getRequestUrl))
     .ap(Reader(getRequestHeaders));
 
-export const requestF = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<Request, any> =>
+export const requestF = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<GQLRequestContext, any> =>
   gql2request.chain(mapper).map(request.run);
 
 /*
