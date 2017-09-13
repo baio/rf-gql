@@ -75,6 +75,17 @@ export const gql2request: Reader<GQLRequestContext, Request> =
 export const requestF = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<GQLRequestContext, any> =>
   gql2request.chain(mapper).map(request.run);
 
+export const createGQLRequestContext = (config: HttpConfig)  => (request: Request) => (gqlRequest: GQLRequest) : GQLRequestContext =>
+  ({config, gqlRequest, request});
+
+export const createGQLRequest = (root, args, context, meta): GQLRequest => ({root, args, context, meta});
+
+export type ComposeContext = (config: HttpConfig)  => (request: Request) => (root, args, context, meta) => GQLRequestContext;
+export const composeContext: ComposeContext = (config: HttpConfig)  => (request: Request) => //(root, args, context, meta) =>
+  R.compose(createGQLRequestContext(config)(request), createGQLRequest);
+
+
+
 /*
 export type RequestM = FutureReader<GQLRequestContext, any>;
 export type CreateRequestM = (rqeuestPromise: RequestPromise) => RequestM;

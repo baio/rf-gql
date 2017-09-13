@@ -1,7 +1,7 @@
 import { Reader } from "ramda-fantasy";
 import { reshape } from "./future-utils";
-import { gql2request, GQLRequestContext, HttpConfig, requestF } from "./graphql";
-import { request } from "./http";
+import { gql2request, GQLRequestContext, HttpConfig, requestF, Request, composeContext, GQLRequest } from "./graphql";
+import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
 import * as R from "ramda";
 
@@ -85,5 +85,41 @@ describe("graphql", () => {
           done();
         }
       );
+  });
+
+  it("compose request", () => {
+    const httpConfig: HttpConfig = {
+      baseUrl: "https://httpbin.org",
+      providers: {
+        dafualt: "anything"
+      },
+      api: {}
+    };
+
+    const appContext = composeContext(httpConfig);
+
+    const req: Request = {
+      provider: "ip",
+      url: "%(x)s",
+      method: "GET"
+    };
+
+    const reqContext = appContext(req);
+
+    const expected: GQLRequestContext = {
+      config: {
+        baseUrl: "https://httpbin.org",
+        providers: { dafualt: "anything" },
+        api: {}
+      },
+      gqlRequest: { root: {}, args: { x: "some" }, context: {}, meta: {} },
+      request: { provider: "ip", url: "%(x)s", method: "GET" }
+    };
+
+    const actual = reqContext({}, { x: "some" }, {}, {});
+
+    //console.log(actual);
+
+    expect(expected).toEqual(actual);
   });
 });
