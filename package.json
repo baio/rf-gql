@@ -1,12 +1,13 @@
 {
-  "name": "fgql",
+  "name": "rf-gql",
   "version": "1.0.0",
   "description": "",
   "main": "dist/graphql.js",
   "types": "dist/graphql.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jasmine --config=./jasmine.json"
+    "test": "jasmine --config=./jasmine.json",
+    "publish": "npm run build && npm test && npm publish"
   },
   "keywords": [
     "graphql",
