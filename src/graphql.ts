@@ -84,6 +84,16 @@ export type ComposeContext = (config: HttpConfig)  => (request: Request) => (roo
 export const composeContext: ComposeContext = (config: HttpConfig)  => (request: Request) => //(root, args, context, meta) =>
   R.compose(createGQLRequestContext(config)(request), createGQLRequest);
 
+/*
+export type HandlerF = (config: HttpConfig)  => (request: Request) => (root, args, context, meta) => ReaderF<GQLRequestContext, any>;
+export const handlerF: HandlerF = (config: HttpConfig)  => (request: Request) => (root, args, context, meta) => {
+  //GQLRequestContext
+  const ctx = composeContext(config)(request)(root, args, context, meta);
+  const handler = requestF(Reader.of);
+  return ReaderF.of(Future.of(ctx)).chain(handler.run);
+}
+*/
+
 
 
 /*

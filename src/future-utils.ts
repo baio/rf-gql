@@ -32,3 +32,13 @@ export const mapPromise: (<T, R>(f: MapPromiseFun<T, R>) => ReaderF<T, R>) = f =
  */
 export const reshape = <T1, T2>(f: MapFun<T1, T2>) => (reader: Reader<T1>) : Reader<T2> =>
   Reader(f).map(reader.run);
+
+/**
+ * Given future returns promise.
+ *
+ * @param {Future} future
+ * @returns {Promise<any>}
+ */
+export const toPromise = (future: Future) : Promise<any> =>
+  new Promise((res, rej) => future.fork(rej, res));
+

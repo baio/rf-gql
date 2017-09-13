@@ -1,5 +1,5 @@
 import { Reader } from "ramda-fantasy";
-import { reshape } from "./future-utils";
+import { reshape, toPromise } from "./future-utils";
 import { gql2request, GQLRequestContext, HttpConfig, requestF, Request, composeContext, GQLRequest } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
@@ -122,4 +122,85 @@ describe("graphql", () => {
 
     expect(expected).toEqual(actual);
   });
+
+  it("map gql request to request", done => {
+    const httpConfig: HttpConfig = {
+      baseUrl: "https://httpbin.org",
+      providers: {
+        default: "anything"
+      },
+      api: {}
+    };
+
+    const appContext = composeContext(httpConfig);
+
+    const req: Request = {
+      provider: "default",
+      url: "%(x)s",
+      method: "GET"
+    };
+
+    const reqContext = appContext(req);
+
+    const handler = R.compose(requestF(Reader.of).run, reqContext);
+
+    handler({}, { x: "some" }, {}, {}).fork(
+      err => {
+        expect(err).toBeNull();
+        done();
+      },
+      res => {
+        expect(res).toBeTruthy();
+        done();
+      }
+    );
+
+    //console.log(actual);
+  });
+
+  it("map gql request to request", done => {
+    const httpConfig: HttpConfig = {
+      baseUrl: "https://httpbin.org",
+      providers: {
+        default: "anything"
+      },
+      api: {}
+    };
+
+    //req -> (a,..,d) -> GQLRequestContext
+    const appContext = composeContext(httpConfig);
+
+    const req: Request = {
+      provider: "default",
+      url: "%(x)s",
+      method: "GET"
+    };
+
+    //(a, .., d) -> GQLRequestContext
+    const reqContext = appContext(req);
+
+    //HttpConfig -> Request -> (a,...,d) -> ReaderF<GQLContext, any>
+
+
+    const runHandler = h => R.compose(h.run, reqContext);
+    const runHandlerP = h => R.compose(toPromise, runHandler(h));
+
+    const handlerF = requestF(Reader.of);
+    //const handler = R.compose(runHandlerP, handlerF);
+
+    runHandlerP(handlerF)({}, { x: "some" }, {}, {})
+    .then(
+      res => {
+        expect(res).toBeTruthy();
+        done();
+      },
+      err => {
+        expect(err).toBeNull();
+        done();
+      },
+    );
+
+    //console.log(actual);
+  });
+
 });
