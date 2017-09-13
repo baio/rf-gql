@@ -182,13 +182,13 @@ describe("graphql", () => {
     //HttpConfig -> Request -> (a,...,d) -> ReaderF<GQLContext, any>
 
 
-    const runHandler = h => R.compose(h.run, reqContext);
-    const runHandlerP = h => R.compose(toPromise, runHandler(h));
+    const runRequestF = h => R.compose(h.run, reqContext);
+    const runRequestP = h => R.compose(toPromise, runRequestF(h));
 
     const handlerF = requestF(Reader.of);
     //const handler = R.compose(runHandlerP, handlerF);
 
-    runHandlerP(handlerF)({}, { x: "some" }, {}, {})
+    runRequestP(handlerF)({}, { x: "some" }, {}, {})
     .then(
       res => {
         expect(res).toBeTruthy();
