@@ -42,3 +42,7 @@ export const reshape = <T1, T2>(f: MapFun<T1, T2>) => (reader: Reader<T1>) : Rea
 export const toPromise = (future: Future) : Promise<any> =>
   new Promise((res, rej) => future.fork(rej, res));
 
+export type Fun<T> = (...args) => T;
+export type RunReaderFP<E, R> = (r: ReaderF<E, R>) => (f: Fun<E>) => (...args) => Promise<R>;
+
+export const runReaderFP: RunReaderFP<any, any> = r => f => compose(toPromise, r.run, f);

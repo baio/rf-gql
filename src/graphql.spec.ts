@@ -1,6 +1,15 @@
 import { Reader } from "ramda-fantasy";
-import { reshape, toPromise } from "./future-utils";
-import { gql2request, GQLRequestContext, HttpConfig, requestF, Request, composeContext, GQLRequest } from "./graphql";
+import { reshape, runReaderFP } from "./future-utils";
+import {
+  gql2request,
+  GQLRequestContext,
+  HttpConfig,
+  requestF,
+  Request,
+  composeContext,
+  GQLRequest,
+  handler
+} from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
 import * as R from "ramda";
@@ -168,7 +177,7 @@ describe("graphql", () => {
     };
 
     //req -> (a,..,d) -> GQLRequestContext
-    const appContext = composeContext(httpConfig);
+    const appReq = composeContext(httpConfig);
 
     const req: Request = {
       provider: "default",
@@ -176,20 +185,13 @@ describe("graphql", () => {
       method: "GET"
     };
 
-    //(a, .., d) -> GQLRequestContext
-    const reqContext = appContext(req);
-
-    //HttpConfig -> Request -> (a,...,d) -> ReaderF<GQLContext, any>
-
-
-    const runRequestF = h => R.compose(h.run, reqContext);
-    const runRequestP = h => R.compose(toPromise, runRequestF(h));
+    const handlerReq = appReq(req);
 
     const handlerF = requestF(Reader.of);
-    //const handler = R.compose(runHandlerP, handlerF);
 
-    runRequestP(handlerF)({}, { x: "some" }, {}, {})
-    .then(
+    const handler = runReaderFP(handlerF)(handlerReq);
+
+    handler({}, { x: "some" }, {}, {}).then(
       res => {
         expect(res).toBeTruthy();
         done();
@@ -197,10 +199,45 @@ describe("graphql", () => {
       err => {
         expect(err).toBeNull();
         done();
-      },
+      }
     );
 
     //console.log(actual);
   });
 
+  it("handler", done => {
+    const httpConfig: HttpConfig = {
+      baseUrl: "https://httpbin.org",
+      providers: {
+        default: "anything"
+      },
+      api: {}
+    };
+
+    //req -> (a,..,d) -> GQLRequestContext
+    const appHandler = handler(httpConfig);
+
+    const req: Request = {
+      provider: "default",
+      url: "%(x)s",
+      method: "GET"
+    };
+
+    const reqF = requestF(Reader.of);
+
+    const requestHandler = appHandler(req)(reqF);
+
+    requestHandler({}, { x: "some" }, {}, {}).then(
+      res => {
+        expect(res).toBeTruthy();
+        done();
+      },
+      err => {
+        expect(err).toBeNull();
+        done();
+      }
+    );
+
+    //console.log(actual);
+  });
 });
