@@ -1,4 +1,4 @@
-import { pipe, flip, compose, curry } from "ramda";
+import { pipe, flip, compose, curry, prop } from "ramda";
 import { Reader, Future } from "ramda-fantasy";
 
 /**
@@ -44,5 +44,14 @@ export const toPromise = (future: Future) : Promise<any> =>
 
 export type Fun<T> = (...args) => T;
 export type RunReaderFP<E, R> = (r: ReaderF<E, R>) => (f: Fun<E>) => (...args) => Promise<R>;
-
+/**
+ * Accepts Reader Future and function with some arguments.
+ * Returns new function which accepts same arguments as f function and returns promise, which is converted from future
+ * which obtained after reader runs with result reurned by original function f.
+ * @param r
+ */
 export const runReaderFP: RunReaderFP<any, any> = r => f => compose(toPromise, r.run, f);
+
+export const askRF = <T1, T2, T3>(f: MapFun<T1, MapFun<T2, T3>>) =>  <T1,T2>(reader: ReaderF<T1,T2>) : ReaderF<T1,T3> =>
+  reader.chain(fut => Reader(compose(fut.map.bind(fut), f)));
+

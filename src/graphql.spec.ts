@@ -1,5 +1,5 @@
 import { Reader } from "ramda-fantasy";
-import { reshape, runReaderFP } from "./future-utils";
+import { reshape, runReaderFP, askRF } from "./future-utils";
 import {
   gql2request,
   GQLRequestContext,
@@ -223,13 +223,24 @@ describe("graphql", () => {
       method: "GET"
     };
 
-    const reqF = requestF(Reader.of);
+    /*
+    const reqF = requestF(Reader.of)
+      .chain(result =>
+        Reader(context =>
+          result.map(res =>
+            context.gqlRequest.args.x + "=" + res.url
+          )
+        )
+      );
+    */
+    const mapResult = context => res => context.gqlRequest.args.x + "=" + res.url;
+    const reqF = askRF(mapResult)(requestF(Reader.of));
 
     const requestHandler = appHandler(req)(reqF);
 
     requestHandler({}, { x: "some" }, {}, {}).then(
       res => {
-        expect(res).toBeTruthy();
+        expect(res).toEqual("some=https://httpbin.org/anything/some");
         done();
       },
       err => {
