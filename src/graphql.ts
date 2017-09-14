@@ -72,11 +72,8 @@ export const gql2request: Reader<GQLRequestContext, Request> =
     .ap(Reader(getRequestUrl))
     .ap(Reader(getRequestHeaders));
 
-export const requestFM = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<GQLRequestContext, any> =>
-  gql2request.chain(mapper).map(request.run);
-
-//Identity request mapping
-export const requestFI = requestFM(Reader.of);
+export type RequestF = ReaderF<GQLRequestContext, any>;
+export const requestF = gql2request.map(request.run);
 
 export const createGQLRequestContext = (config: HttpConfig)  => (request: Request) => (gqlRequest: GQLRequest) : GQLRequestContext =>
   ({config, gqlRequest, request});
@@ -90,22 +87,3 @@ export const composeContext: ComposeContext = (config: HttpConfig)  => (request:
 export type Handler = (httpConfig: HttpConfig) => (req: Reader<GQLRequest, Request>) => <R>(handlerF: ReaderF<GQLRequestContext, R>) => (root, args, context, meta) =>  Promise<R>;
 export const handler: Handler = httpConfig => req => handlerF =>
   runReaderFP(handlerF)(composeContext(httpConfig)(req))
-/*
-export type HandlerF = (config: HttpConfig)  => (request: Request) => (root, args, context, meta) => ReaderF<GQLRequestContext, any>;
-export const handlerF: HandlerF = (config: HttpConfig)  => (request: Request) => (root, args, context, meta) => {
-  //GQLRequestContext
-  const ctx = composeContext(config)(request)(root, args, context, meta);
-  const handler = requestF(Reader.of);
-  return ReaderF.of(Future.of(ctx)).chain(handler.run);
-}
-*/
-
-
-
-/*
-export type RequestM = FutureReader<GQLRequestContext, any>;
-export type CreateRequestM = (rqeuestPromise: RequestPromise) => RequestM;
-const createrRequestM : CreateRequestM = R.compose(gql2request.chain, toFutureReader);
-
-export const request = createrRequestM(createRequest);
-*/
