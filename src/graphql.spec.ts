@@ -15,6 +15,46 @@ import { log, fmerge } from "./utils";
 import * as R from "ramda";
 
 describe("graphql", () => {
+  it("map gql2request (qs & heders)", () => {
+    const httpConfig: HttpConfig = {
+      baseUrl: "https://httpbin.org",
+      providers: {
+        ip: "ip",
+        uuid: "uuid"
+      },
+      api: {
+        getHeaders: ctx => ({ token: ctx.context.token })
+      }
+    };
+
+    const requestContext: GQLRequestContext = {
+      config: httpConfig,
+      request: {
+        provider: "ip",
+        url: "",
+        method: "GET",
+        qs: { filter: "zzz" }
+      },
+      gqlRequest: {
+        root: {},
+        args: {},
+        context: { token: "lol" },
+        meta: {}
+      }
+    };
+
+    const expected: HttpRequest = {
+      url: "https://httpbin.org/ip",
+      method: "GET",
+      headers: { token: "lol" },
+      qs: { filter: "zzz" }
+    };
+
+    const actual = gql2request.run(requestContext);
+
+    expect(actual).toEqual(expected);
+  });
+
   it("run request from graphql context", done => {
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",
@@ -82,20 +122,20 @@ describe("graphql", () => {
 
     //TODO:!!!
     Reader(ctx => Future.of({ ...ctx, url: ctx["request"].provider }))
-    .chain(requestF)
-    .run(requestContext)
-    .fork(
-      err => {
-        //unexpected url
-        console.log(err);
-        expect(err.toString()).toBe('RequestError: Error: Invalid URI "ip"');
-        done();
-      },
-      res => {
-        expect(res).toBeNull();
-        done();
-      }
-    );
+      .chain(requestF)
+      .run(requestContext)
+      .fork(
+        err => {
+          //unexpected url
+          console.log(err);
+          expect(err.toString()).toBe('RequestError: Error: Invalid URI "ip"');
+          done();
+        },
+        res => {
+          expect(res).toBeNull();
+          done();
+        }
+      );
   });
 
   it("compose request", () => {
@@ -143,7 +183,7 @@ describe("graphql", () => {
 
     const appContext = composeContext(httpConfig);
 
-    const req =Reader.of(<Request> {
+    const req = Reader.of(<Request>{
       provider: "default",
       url: "%(x)s",
       method: "GET"
