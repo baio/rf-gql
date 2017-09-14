@@ -4,7 +4,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import { Reader, Future } from "ramda-fantasy";
-import { future, ReaderF, MapFun, toPromise, runReaderFP } from "./future-utils";
+import { fromPromise, ReaderF, MapFun, toPromise, runReaderFP } from "./future-utils";
 import { request, RequestMethods } from "./http";
 
 export interface GQLRequest {

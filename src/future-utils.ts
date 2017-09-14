@@ -13,7 +13,7 @@ export type ReaderF<T, R> = Reader<T, Future<R>>;
 * @param {Promise<any>} promise
 * @returns {Future}
 */
-export const future = (promise: Promise<any>) : Future =>
+export const fromPromise = (promise: Promise<any>) : Future =>
  pipe(flip, Future)(promise.then.bind(promise));
 
 export type MapFun<T1, T2> = ((x: T1) =>  T2);
@@ -25,7 +25,7 @@ export type MapPromise<T, R> = (f: MapPromiseFun<T, R>) => ReaderF<T, R>;
  * @param {any} f
  */
 export const mapPromise: (<T, R>(f: MapPromiseFun<T, R>) => ReaderF<T, R>) = f =>
-  Reader(compose(future, f));
+  Reader(compose(fromPromise, f));
 /**
  * Given reader and map function, run map function on env and then returns new reader with env from map result.
  * @param f

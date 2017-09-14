@@ -3,7 +3,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import {Reader, Future} from "ramda-fantasy";
-import { future, ReaderF, mapPromise, reshape } from "./future-utils";
+import { fromPromise, ReaderF, mapPromise, reshape } from "./future-utils";
 
 //////
 export interface RequestGet {
