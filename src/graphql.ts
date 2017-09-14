@@ -67,7 +67,7 @@ const getRequestUrl = ({
  * @param {GQLRequestContext} {api: {getHeaders}, request}
  */
 const getRequestHeaders = ({ config: { api: { getHeaders } }, gqlRequest }: GQLRequestContext) =>
-  getHeaders ? getHeaders(gqlRequest) : null;
+  getHeaders ? cleanObj(getHeaders(gqlRequest)) : null;
 
 export const gql2request: Reader<GQLRequestContext, Request> =
   Reader.of(qs => method => url => headers => ({ url, headers, qs, method }))

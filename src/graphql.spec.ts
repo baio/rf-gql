@@ -23,7 +23,7 @@ describe("graphql", () => {
         uuid: "uuid"
       },
       api: {
-        getHeaders: ctx => ({ token: ctx.context.token })
+        getHeaders: ctx => ({ token: ctx.context.token, none: undefined })
       }
     };
 
