@@ -8,7 +8,7 @@ import {
   Request,
   composeContext,
   GQLRequest,
-  handler
+  resolver
 } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
@@ -213,7 +213,7 @@ describe("graphql", () => {
     };
 
     //req -> (a,..,d) -> GQLRequestContext
-    const appHandler = handler(httpConfig);
+    const appHandler = resolver(httpConfig);
 
     const req = Reader.of(<Request>{
       provider: "default",

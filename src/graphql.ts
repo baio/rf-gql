@@ -18,6 +18,8 @@ export interface Request {
   provider: string;
   method: RequestMethods;
   url: string;
+  qs?: { [key: string]: any } | null;
+  headers?: { [key: string]: any } | null;
 }
 
 export interface HttpConfig {
@@ -72,8 +74,8 @@ export const gql2request: Reader<GQLRequestContext, Request> =
     .ap(Reader(getRequestUrl))
     .ap(Reader(getRequestHeaders));
 
-export type RequestF = ReaderF<GQLRequestContext, any>;
-export const requestF = gql2request.map(request.run);
+export const runReader = <R>(r: Reader<Request, R>): Reader<GQLRequestContext, R> => gql2request.map(r.run);
+export const requestF = runReader<Future<any, any>>(request);
 
 export const createGQLRequestContext = (config: HttpConfig)  => (request: Request) => (gqlRequest: GQLRequest) : GQLRequestContext =>
   ({config, gqlRequest, request});
@@ -84,6 +86,6 @@ export type ComposeContext = (config: HttpConfig)  => (request: Reader<GQLReques
 export const composeContext: ComposeContext = (config: HttpConfig)  => (request: Reader<GQLRequest, Request>) => //(root, args, context, meta) =>
   R.compose(x => createGQLRequestContext(config)(request.run(x))(x), createGQLRequest);
 
-export type Handler = (httpConfig: HttpConfig) => (req: Reader<GQLRequest, Request>) => <R>(handlerF: ReaderF<GQLRequestContext, R>) => (root, args, context, meta) =>  Promise<R>;
-export const handler: Handler = httpConfig => req => handlerF =>
-  runReaderFP(handlerF)(composeContext(httpConfig)(req))
+export type Resolver = (httpConfig: HttpConfig) => (req: Reader<GQLRequest, Request>) => <R>(reader: ReaderF<GQLRequestContext, R>) => (root, args, context, meta) =>  Promise<R>;
+export const resolver: Resolver = httpConfig => req => readerF =>
+  runReaderFP(readerF)(composeContext(httpConfig)(req));
