@@ -76,10 +76,10 @@ export const gql2request: Reader<GQLRequestContext, Request> =
     .ap(Reader(getRequestUrl))
     .ap(Reader(getRequestHeaders));
 
-export const runReaderF = <R>(r: ReaderF<Request, R>): Reader<GQLRequestContext, R> => ofReader(gql2request).chain(
+export const mapReaderF = <R>(r: ReaderF<Request, R>): Reader<GQLRequestContext, R> => ofReader(gql2request).chain(
    R.compose(Reader.of, r.run)
 );
-export const requestF = runReaderF<Future<any, any>>(request);
+export const requestF = mapReaderF<Future<any, any>>(request);
 
 export const createGQLRequestContext = (config: HttpConfig)  => (request: Request) => (gqlRequest: GQLRequest) : GQLRequestContext =>
   ({config, gqlRequest, request});
