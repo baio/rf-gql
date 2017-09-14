@@ -243,7 +243,7 @@ describe("graphql", () => {
     //console.log(actual);
   });
 
-  it("handler", done => {
+  xit("handler", done => {
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",
       providers: {

@@ -13,7 +13,7 @@ export type ReaderF<T, R> = Reader<T, Future<R>>;
 * @param {Promise<any>} promise
 * @returns {Future}
 */
-export const fromPromise = (promise: Promise<any>) : Future =>
+export const ofPromise = (promise: Promise<any>) : Future =>
  pipe(flip, Future)(promise.then.bind(promise));
 
 export type MapFun<T1, T2> = ((x: T1) =>  T2);
@@ -25,7 +25,7 @@ export type MapPromise<T, R> = (f: MapPromiseFun<T, R>) => ReaderF<T, R>;
  * @param {any} f
  */
 export const mapPromise: (<T, R>(f: MapPromiseFun<T, R>) => ReaderF<T, R>) = f =>
-  Reader(compose(fromPromise, f));
+  Reader(compose(ofPromise, f));
 /**
  * Given reader and map function, run map function on env and then returns new reader with env from map result.
  * @param f
@@ -55,3 +55,5 @@ export const runReaderFP: RunReaderFP<any, any> = r => f => compose(toPromise, r
 export const askRF = <T1, T2, T3>(f: MapFun<T1, MapFun<T2, T3>>) =>  <T1,T2>(reader: ReaderF<T1,T2>) : ReaderF<T1,T3> =>
   reader.chain(fut => Reader(compose(fut.map.bind(fut), f)));
 
+export const ofReader = <E, R>(reader: Reader<E, R>): ReaderF<E, R> =>
+  ReaderF.ask.map(reader.run);

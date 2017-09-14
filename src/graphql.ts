@@ -4,7 +4,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import { Reader, Future } from "ramda-fantasy";
-import { fromPromise, ReaderF, MapFun, toPromise, runReaderFP } from "./future-utils";
+import { ofPromise, ReaderF, MapFun, toPromise, runReaderFP, ofReader } from "./future-utils";
 import { request, RequestMethods } from "./http";
 
 export interface GQLRequest {
@@ -76,8 +76,10 @@ export const gql2request: Reader<GQLRequestContext, Request> =
     .ap(Reader(getRequestUrl))
     .ap(Reader(getRequestHeaders));
 
-export const runReader = <R>(r: Reader<Request, R>): Reader<GQLRequestContext, R> => gql2request.map(r.run);
-export const requestF = runReader<Future<any, any>>(request);
+export const runReaderF = <R>(r: ReaderF<Request, R>): Reader<GQLRequestContext, R> => ofReader(gql2request).chain(
+   R.compose(Reader.of, r.run)
+);
+export const requestF = runReaderF<Future<any, any>>(request);
 
 export const createGQLRequestContext = (config: HttpConfig)  => (request: Request) => (gqlRequest: GQLRequest) : GQLRequestContext =>
   ({config, gqlRequest, request});

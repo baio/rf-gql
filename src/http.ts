@@ -3,7 +3,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import {Reader, Future} from "ramda-fantasy";
-import { fromPromise, ReaderF, mapPromise, reshape } from "./future-utils";
+import { ofPromise, ReaderF, mapPromise, reshape } from "./future-utils";
 
 //////
 export interface RequestGet {
@@ -29,13 +29,15 @@ export type RequestPromise = (request: Request) => Promise<any>;
  *
  * @param {Request} request
  */
-export const requestPromise: RequestPromise = request =>
-  req(request.url, {
+export const requestPromise: RequestPromise = request => {
+  console.log(">>> request", request);
+  return req(request.url, {
       method: request.method,
       headers: request.headers,
       qs: request.qs,
       json: true
   }).promise();
+}
 
 /**
  * Reader<Request, Future<any, any>>
