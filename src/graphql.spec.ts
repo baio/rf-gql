@@ -4,7 +4,7 @@ import {
   gql2request,
   GQLRequestContext,
   HttpConfig,
-  requestF,
+  requestFM,
   Request,
   composeContext,
   GQLRequest,
@@ -80,7 +80,7 @@ describe("graphql", () => {
       }
     };
 
-    requestF(req => Reader(ctx => ({ ...req, url: ctx.request.provider })))
+    requestFM(req => Reader(ctx => ({ ...req, url: ctx.request.provider })))
       .run(requestContext)
       .fork(
         err => {
@@ -107,11 +107,11 @@ describe("graphql", () => {
 
     const appContext = composeContext(httpConfig);
 
-    const req: Request = {
+    const req = Reader.of(<Request>{
       provider: "ip",
       url: "%(x)s",
       method: "GET"
-    };
+    });
 
     const reqContext = appContext(req);
 
@@ -127,7 +127,7 @@ describe("graphql", () => {
 
     const actual = reqContext({}, { x: "some" }, {}, {});
 
-    //console.log(actual);
+    console.log(actual);
 
     expect(expected).toEqual(actual);
   });
@@ -143,15 +143,15 @@ describe("graphql", () => {
 
     const appContext = composeContext(httpConfig);
 
-    const req: Request = {
+    const req =Reader.of(<Request> {
       provider: "default",
       url: "%(x)s",
       method: "GET"
-    };
+    });
 
     const reqContext = appContext(req);
 
-    const handler = R.compose(requestF(Reader.of).run, reqContext);
+    const handler = R.compose(requestFM(Reader.of).run, reqContext);
 
     handler({}, { x: "some" }, {}, {}).fork(
       err => {
@@ -179,15 +179,15 @@ describe("graphql", () => {
     //req -> (a,..,d) -> GQLRequestContext
     const appReq = composeContext(httpConfig);
 
-    const req: Request = {
+    const req = Reader.of(<Request>{
       provider: "default",
       url: "%(x)s",
       method: "GET"
-    };
+    });
 
     const handlerReq = appReq(req);
 
-    const handlerF = requestF(Reader.of);
+    const handlerF = requestFM(Reader.of);
 
     const handler = runReaderFP(handlerF)(handlerReq);
 
@@ -217,11 +217,11 @@ describe("graphql", () => {
     //req -> (a,..,d) -> GQLRequestContext
     const appHandler = handler(httpConfig);
 
-    const req: Request = {
+    const req = Reader.of(<Request>{
       provider: "default",
       url: "%(x)s",
       method: "GET"
-    };
+    });
 
     /*
     const reqF = requestF(Reader.of)
@@ -234,7 +234,7 @@ describe("graphql", () => {
       );
     */
     const mapResult = context => res => context.gqlRequest.args.x + "=" + res.url;
-    const reqF = askRF(mapResult)(requestF(Reader.of));
+    const reqF = askRF(mapResult)(requestFM(Reader.of));
 
     const requestHandler = appHandler(req)(reqF);
 

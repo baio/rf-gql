@@ -72,19 +72,22 @@ export const gql2request: Reader<GQLRequestContext, Request> =
     .ap(Reader(getRequestUrl))
     .ap(Reader(getRequestHeaders));
 
-export const requestF = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<GQLRequestContext, any> =>
+export const requestFM = (mapper: MapFun<Request, Reader<GQLRequest>>): ReaderF<GQLRequestContext, any> =>
   gql2request.chain(mapper).map(request.run);
+
+//Identity request mapping
+export const requestFI = requestFM(Reader.of);
 
 export const createGQLRequestContext = (config: HttpConfig)  => (request: Request) => (gqlRequest: GQLRequest) : GQLRequestContext =>
   ({config, gqlRequest, request});
 
 export const createGQLRequest = (root, args, context, meta): GQLRequest => ({root, args, context, meta});
 
-export type ComposeContext = (config: HttpConfig)  => (request: Request) => (root, args, context, meta) => GQLRequestContext;
-export const composeContext: ComposeContext = (config: HttpConfig)  => (request: Request) => //(root, args, context, meta) =>
-  R.compose(createGQLRequestContext(config)(request), createGQLRequest);
+export type ComposeContext = (config: HttpConfig)  => (request: Reader<GQLRequest, Request>) => (root, args, context, meta) => GQLRequestContext;
+export const composeContext: ComposeContext = (config: HttpConfig)  => (request: Reader<GQLRequest, Request>) => //(root, args, context, meta) =>
+  R.compose(x => createGQLRequestContext(config)(request.run(x))(x), createGQLRequest);
 
-export type Handler = (httpConfig: HttpConfig) => (req: Request) => <R>(handlerF: ReaderF<GQLRequestContext, R>) => (root, args, context, meta) =>  Promise<R>;
+export type Handler = (httpConfig: HttpConfig) => (req: Reader<GQLRequest, Request>) => <R>(handlerF: ReaderF<GQLRequestContext, R>) => (root, args, context, meta) =>  Promise<R>;
 export const handler: Handler = httpConfig => req => handlerF =>
   runReaderFP(handlerF)(composeContext(httpConfig)(req))
 /*
