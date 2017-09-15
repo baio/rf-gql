@@ -42,7 +42,8 @@ export const requestPromise: RequestPromise = request => {
 /**
  * Reader<Request, Future<any, any>>
 */
-export const request = mapPromise<Request, any>(requestPromise);
+export const request = mapPromise<Request, any>(requestPromise).map(Future.cache);
+
 
 const requestMethod = method => reshape(R.merge({ method }))(request);
 export const get: ReaderF<RequestGet, any> = requestMethod("GET");
