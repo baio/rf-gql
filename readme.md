@@ -10,6 +10,17 @@ Use `Reader<GQLRequest, Request>` to convert `GQLRequest` to `Request`.
 
 Use `Reader<GQLRequestContext, Future<any, R>>` to chain requests.
 
+## Http
+
+```
+requestF a::Reader<GQLRequestContext, Future<any, a>>
+```
+Future will be created with `http.request`
+Future will dispatch actual http request.
+Future created with `http.request` is always cached.
+
+## Use with other Futures (tests)
+To use another future  `mapReaderF a:: Reader Future<any, a> -> Reader Future<GQLRequestContext, a>`
 
 ## Development
 
