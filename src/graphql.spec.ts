@@ -1,5 +1,5 @@
 import { Reader, Future } from "ramda-fantasy";
-import { reshape, runReaderFP, askRF } from "./future-utils";
+import { reshape, runReaderFP } from "./future-utils";
 import {
   gql2request,
   GQLRequestContext,
@@ -242,7 +242,7 @@ describe("graphql", () => {
 
     //console.log(actual);
   });
-
+  /*
   xit("handler", done => {
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",
@@ -261,16 +261,6 @@ describe("graphql", () => {
       method: "GET"
     });
 
-    /*
-    const reqF = requestF(Reader.of)
-      .chain(result =>
-        Reader(context =>
-          result.map(res =>
-            context.gqlRequest.args.x + "=" + res.url
-          )
-        )
-      );
-    */
     const mapResult = context => res => context.gqlRequest.args.x + "=" + res.url;
     const reqF = askRF(mapResult)(requestF);
 
@@ -289,4 +279,5 @@ describe("graphql", () => {
 
     //console.log(actual);
   });
+  */
 });

@@ -52,8 +52,5 @@ export type RunReaderFP<E, R> = (r: ReaderF<E, R>) => (f: Fun<E>) => (...args) =
  */
 export const runReaderFP: RunReaderFP<any, any> = r => f => compose(toPromise, r.run, f);
 
-export const askRF = <T1, T2, T3>(f: MapFun<T1, MapFun<T2, T3>>) =>  <T1,T2>(reader: ReaderF<T1,T2>) : ReaderF<T1,T3> =>
-  reader.chain(fut => Reader(compose(fut.map.bind(fut), f)));
-
 export const ofReader = <E, R>(reader: Reader<E, R>): ReaderF<E, R> =>
   ReaderF.ask.map(reader.run);
