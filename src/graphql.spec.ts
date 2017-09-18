@@ -242,6 +242,47 @@ describe("graphql", () => {
 
     //console.log(actual);
   });
+
+  it("map gql request to request (post)", done => {
+    const httpConfig: HttpConfig = {
+      baseUrl: "https://httpbin.org",
+      providers: {
+        default: "headers"
+      },
+      api: {
+        getHeaders:() => ({header1: "lol"})
+      }
+    };
+
+    //req -> (a,..,d) -> GQLRequestContext
+    const appReq = composeContext(httpConfig);
+
+    const req = Reader.of(<Request>{
+      provider: "default",
+      url: "",
+      method: "GET",
+      headers: {header2: "kek"}
+    });
+
+    const handlerReq = appReq(req);
+
+    const handler = runReaderFP(requestF)(handlerReq);
+
+    handler({}, { }, {}, {}).then(
+      res => {
+        console.log(res);
+        expect(res).toBeTruthy();
+        done();
+      },
+      err => {
+        expect(err).toBeNull();
+        done();
+      }
+    );
+
+    //console.log(actual);
+  });
+
   /*
   xit("handler", done => {
     const httpConfig: HttpConfig = {
