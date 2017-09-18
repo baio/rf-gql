@@ -46,9 +46,6 @@ exports.toPromise = function (future) {
  * @param r
  */
 exports.runReaderFP = function (r) { return function (f) { return ramda_1.compose(exports.toPromise, r.run, f); }; };
-exports.askRF = function (f) { return function (reader) {
-    return reader.chain(function (fut) { return ramda_fantasy_1.Reader(ramda_1.compose(fut.map.bind(fut), f)); });
-}; };
 exports.ofReader = function (reader) {
     return exports.ReaderF.ask.map(reader.run);
 };

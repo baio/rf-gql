@@ -41,5 +41,4 @@ export declare type RunReaderFP<E, R> = (r: ReaderF<E, R>) => (f: Fun<E>) => (..
  * @param r
  */
 export declare const runReaderFP: RunReaderFP<any, any>;
-export declare const askRF: <T1, T2, T3>(f: (x: T1) => MapFun) => <T1, T2>(reader: any) => any;
 export declare const ofReader: <E, R>(reader: any) => any;

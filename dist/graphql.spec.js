@@ -198,41 +198,42 @@ describe("graphql", function () {
         });
         //console.log(actual);
     });
-    xit("handler", function (done) {
-        var httpConfig = {
-            baseUrl: "https://httpbin.org",
-            providers: {
-                default: "anything"
-            },
-            api: {}
-        };
-        //req -> (a,..,d) -> GQLRequestContext
-        var appHandler = graphql_1.resolver(httpConfig);
-        var req = ramda_fantasy_1.Reader.of({
-            provider: "default",
-            url: "%(x)s",
-            method: "GET"
-        });
-        /*
-        const reqF = requestF(Reader.of)
-          .chain(result =>
-            Reader(context =>
-              result.map(res =>
-                context.gqlRequest.args.x + "=" + res.url
-              )
-            )
-          );
-        */
-        var mapResult = function (context) { return function (res) { return context.gqlRequest.args.x + "=" + res.url; }; };
-        var reqF = future_utils_1.askRF(mapResult)(graphql_1.requestF);
-        var requestHandler = appHandler(req)(reqF);
-        requestHandler({}, { x: "some" }, {}, {}).then(function (res) {
-            expect(res).toEqual("some=https://httpbin.org/anything/some");
-            done();
-        }, function (err) {
-            expect(err).toBeNull();
-            done();
-        });
-        //console.log(actual);
+    /*
+    xit("handler", done => {
+      const httpConfig: HttpConfig = {
+        baseUrl: "https://httpbin.org",
+        providers: {
+          default: "anything"
+        },
+        api: {}
+      };
+  
+      //req -> (a,..,d) -> GQLRequestContext
+      const appHandler = resolver(httpConfig);
+  
+      const req = Reader.of(<Request>{
+        provider: "default",
+        url: "%(x)s",
+        method: "GET"
+      });
+  
+      const mapResult = context => res => context.gqlRequest.args.x + "=" + res.url;
+      const reqF = askRF(mapResult)(requestF);
+  
+      const requestHandler = appHandler(req)(reqF);
+  
+      requestHandler({}, { x: "some" }, {}, {}).then(
+        res => {
+          expect(res).toEqual("some=https://httpbin.org/anything/some");
+          done();
+        },
+        err => {
+          expect(err).toBeNull();
+          done();
+        }
+      );
+  
+      //console.log(actual);
     });
+    */
 });
