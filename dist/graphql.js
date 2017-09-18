@@ -1,4 +1,12 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var urlJoin = require("url-join");
 var sprintf_js_1 = require("sprintf-js");
@@ -35,10 +43,11 @@ var getRequestUrl = function (_a) {
  * @param {GQLRequestContext} {api: {getHeaders}, request}
  */
 var getRequestHeaders = function (_a) {
-    var getHeaders = _a.config.api.getHeaders, gqlRequest = _a.gqlRequest;
-    return getHeaders ? utils_1.cleanObj(getHeaders(gqlRequest)) : null;
+    var getHeaders = _a.config.api.getHeaders, gqlRequest = _a.gqlRequest, headers = _a.request.headers;
+    return utils_1.cleanObj(__assign({}, getHeaders ? getHeaders(gqlRequest) : {}, headers));
 };
-exports.gql2request = ramda_fantasy_1.Reader.of(function (qs) { return function (method) { return function (url) { return function (headers) { return ({ url: url, headers: headers, qs: qs, method: method }); }; }; }; })
+exports.gql2request = ramda_fantasy_1.Reader.of(function (body) { return function (qs) { return function (method) { return function (url) { return function (headers) { return utils_1.cleanObj({ url: url, headers: headers, qs: qs, method: method, body: body }); }; }; }; }; })
+    .ap(ramda_fantasy_1.Reader(R.path(["request", "body"])))
     .ap(ramda_fantasy_1.Reader(R.path(["request", "qs"])))
     .ap(ramda_fantasy_1.Reader(R.path(["request", "method"])))
     .ap(ramda_fantasy_1.Reader(getRequestUrl))

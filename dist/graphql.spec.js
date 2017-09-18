@@ -198,6 +198,36 @@ describe("graphql", function () {
         });
         //console.log(actual);
     });
+    it("map gql request to request (post)", function (done) {
+        var httpConfig = {
+            baseUrl: "https://httpbin.org",
+            providers: {
+                default: "post"
+            },
+            api: {
+                getHeaders: function () { return ({ header1: "lol" }); }
+            }
+        };
+        //req -> (a,..,d) -> GQLRequestContext
+        var appReq = graphql_1.composeContext(httpConfig);
+        var req = ramda_fantasy_1.Reader.of({
+            provider: "default",
+            url: "",
+            method: "POST",
+            headers: { header2: "kek" },
+            body: "tfw"
+        });
+        var handlerReq = appReq(req);
+        var handler = future_utils_1.runReaderFP(graphql_1.requestF)(handlerReq);
+        handler({}, {}, {}, {}).then(function (res) {
+            expect(res).toBeTruthy();
+            done();
+        }, function (err) {
+            expect(err).toBeNull();
+            done();
+        });
+        //console.log(actual);
+    });
     /*
     xit("handler", done => {
       const httpConfig: HttpConfig = {
