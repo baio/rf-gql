@@ -247,7 +247,7 @@ describe("graphql", () => {
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",
       providers: {
-        default: "headers"
+        default: "post"
       },
       api: {
         getHeaders:() => ({header1: "lol"})
@@ -260,8 +260,9 @@ describe("graphql", () => {
     const req = Reader.of(<Request>{
       provider: "default",
       url: "",
-      method: "GET",
-      headers: {header2: "kek"}
+      method: "POST",
+      headers: {header2: "kek"},
+      body: "tfw"
     });
 
     const handlerReq = appReq(req);
@@ -270,7 +271,6 @@ describe("graphql", () => {
 
     handler({}, { }, {}, {}).then(
       res => {
-        console.log(res);
         expect(res).toBeTruthy();
         done();
       },

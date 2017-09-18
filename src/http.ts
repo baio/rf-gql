@@ -35,7 +35,8 @@ export const requestPromise: RequestPromise = request => {
       method: request.method,
       headers: request.headers,
       qs: request.qs,
-      json: true
+      json: true,
+      body: request.body
   }).promise();
 }
 
