@@ -7,7 +7,6 @@
   "scripts": {
     "build": "tsc",
     "test": "npm run build && jasmine --config=./jasmine.json",
-    "publish": "npm test && npm publish",
     "link": "npm run build && npm link"
   },
   "keywords": [
