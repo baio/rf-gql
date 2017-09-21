@@ -286,7 +286,7 @@ describe("graphql", () => {
   });
 
 
-  fit("post request with empty response must be handled", () => {
+  it("post request with empty response must be handled", () => {
 
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",
