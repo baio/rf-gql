@@ -12,6 +12,7 @@ import {
 } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
+import { ReaderF } from "./future-utils"
 import * as R from "ramda";
 
 describe("graphql", () => {
@@ -271,6 +272,7 @@ describe("graphql", () => {
 
     handler({}, { }, {}, {}).then(
       res => {
+        console.log(res);
         expect(res).toBeTruthy();
         done();
       },
@@ -283,42 +285,48 @@ describe("graphql", () => {
     //console.log(actual);
   });
 
-  /*
-  xit("handler", done => {
+
+  fit("post request with empty response must be handled", () => {
+
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",
       providers: {
-        default: "anything"
+        default: "post"
       },
-      api: {}
+      api: {
+        getHeaders:() => ({header1: "lol"})
+      }
     };
 
     //req -> (a,..,d) -> GQLRequestContext
-    const appHandler = resolver(httpConfig);
+    const appReq = composeContext(httpConfig);
 
     const req = Reader.of(<Request>{
       provider: "default",
-      url: "%(x)s",
-      method: "GET"
+      url: "",
+      method: "POST",
+      headers: {header2: "kek"},
+      body: "tfw"
     });
 
-    const mapResult = context => res => context.gqlRequest.args.x + "=" + res.url;
-    const reqF = askRF(mapResult)(requestF);
+    const handlerReq = appReq(req);
 
-    const requestHandler = appHandler(req)(reqF);
+    //always empty response
+    //const testRequestF = ReaderF(req => Future((rej, res) => res(req)));
+    //^^^ this the same ???
+    const testRequestF = Reader.of(Future((rej, res) => res()));
 
-    requestHandler({}, { x: "some" }, {}, {}).then(
+    const handler = runReaderFP(testRequestF)(handlerReq);
+
+    handler({}, { }, {}, {}).then(
       res => {
-        expect(res).toEqual("some=https://httpbin.org/anything/some");
-        done();
+        expect(res).toBeUndefined();
       },
       err => {
         expect(err).toBeNull();
-        done();
       }
     );
 
-    //console.log(actual);
   });
-  */
+
 });
