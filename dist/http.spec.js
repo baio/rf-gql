@@ -27,4 +27,17 @@ describe("http", function () {
             done();
         });
     });
+    it("request post with empty response", function (done) {
+        var req = {
+            url: "https://httpbin.org/post",
+        };
+        http_1.post.run(req).fork(function (err) {
+            expect(err).toBeNull();
+            done();
+        }, function (res) {
+            console.log("---", res);
+            expect(res).toBeTruthy();
+            done();
+        });
+    });
 });

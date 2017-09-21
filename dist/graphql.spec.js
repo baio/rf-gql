@@ -220,6 +220,7 @@ describe("graphql", function () {
         var handlerReq = appReq(req);
         var handler = future_utils_1.runReaderFP(graphql_1.requestF)(handlerReq);
         handler({}, {}, {}, {}).then(function (res) {
+            console.log(res);
             expect(res).toBeTruthy();
             done();
         }, function (err) {
@@ -228,42 +229,35 @@ describe("graphql", function () {
         });
         //console.log(actual);
     });
-    /*
-    xit("handler", done => {
-      const httpConfig: HttpConfig = {
-        baseUrl: "https://httpbin.org",
-        providers: {
-          default: "anything"
-        },
-        api: {}
-      };
-  
-      //req -> (a,..,d) -> GQLRequestContext
-      const appHandler = resolver(httpConfig);
-  
-      const req = Reader.of(<Request>{
-        provider: "default",
-        url: "%(x)s",
-        method: "GET"
-      });
-  
-      const mapResult = context => res => context.gqlRequest.args.x + "=" + res.url;
-      const reqF = askRF(mapResult)(requestF);
-  
-      const requestHandler = appHandler(req)(reqF);
-  
-      requestHandler({}, { x: "some" }, {}, {}).then(
-        res => {
-          expect(res).toEqual("some=https://httpbin.org/anything/some");
-          done();
-        },
-        err => {
-          expect(err).toBeNull();
-          done();
-        }
-      );
-  
-      //console.log(actual);
+    it("post request with empty response must be handled", function () {
+        var httpConfig = {
+            baseUrl: "https://httpbin.org",
+            providers: {
+                default: "post"
+            },
+            api: {
+                getHeaders: function () { return ({ header1: "lol" }); }
+            }
+        };
+        //req -> (a,..,d) -> GQLRequestContext
+        var appReq = graphql_1.composeContext(httpConfig);
+        var req = ramda_fantasy_1.Reader.of({
+            provider: "default",
+            url: "",
+            method: "POST",
+            headers: { header2: "kek" },
+            body: "tfw"
+        });
+        var handlerReq = appReq(req);
+        //always empty response
+        //const testRequestF = ReaderF(req => Future((rej, res) => res(req)));
+        //^^^ this the same ???
+        var testRequestF = ramda_fantasy_1.Reader.of(ramda_fantasy_1.Future(function (rej, res) { return res(); }));
+        var handler = future_utils_1.runReaderFP(testRequestF)(handlerReq);
+        handler({}, {}, {}, {}).then(function (res) {
+            expect(res).toBeUndefined();
+        }, function (err) {
+            expect(err).toBeNull();
+        });
     });
-    */
 });
