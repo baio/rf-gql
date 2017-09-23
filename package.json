@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/baio/rf-gql"
+    "url": "https://github.com/baio/rf-gql.git"
   },
   "devDependencies": {
     "jasmine": "^2.8.0",
