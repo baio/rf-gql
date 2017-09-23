@@ -28,7 +28,7 @@ To use another future  `mapReaderF a:: Reader Future<any, a> -> Reader Future<GQ
 + watch / build : `npm start`
 + build : `npm run build`
 + test (+ build) : `npm test`
-+ npm link (+ build): `npm run link`
++ new release : `npm run release`
 
 ### Use link in dependent projects
 
@@ -38,7 +38,6 @@ To use another future  `mapReaderF a:: Reader Future<any, a> -> Reader Future<GQ
 + setup nodemon to watch link npm
   + update `nodemon.json` to stop ignore node_modules from watch `"ignoreRoot": [".git"],`
   + add watch /rebuild command to package.json `concurrently \"cross-env NODE_ENV=dev nodemon --watch ./node_modules/rf-gql/dist --watch dist dist/index.js\" \"cross-env NODE_ENV=dev tsc -w\"`
-+
 
 ## TODO
 
