@@ -28,10 +28,6 @@
     "sprintf-js": "^1.1.1",
     "url-join": "^2.0.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/baio/rf-gql.git"
-  },
   "devDependencies": {
     "jasmine": "^2.8.0",
     "np": "^2.16.0"
