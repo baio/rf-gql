@@ -18,7 +18,14 @@ exports.requestPromise = function (request) {
         qs: request.qs,
         json: true,
         body: request.body
-    }).promise();
+    })
+        .then(function (res) {
+        console.log(">>> response success", res);
+        return res;
+    }, function (err) {
+        console.log(">>> response err", err);
+        throw err;
+    });
 };
 /**
  * Reader<Request, Future<any, any>>

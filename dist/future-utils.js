@@ -13,6 +13,7 @@ exports.ReaderF = ramda_fantasy_1.Reader.T(ramda_fantasy_1.Future);
 * @returns {Future}
 */
 exports.ofPromise = function (promise) {
+    //Future((res, rej) => promise.then(rej, res));
     return ramda_1.pipe(ramda_1.flip, ramda_fantasy_1.Future)(promise.then.bind(promise));
 };
 /**

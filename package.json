@@ -5,9 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "start": "npm run build:watch",
     "build": "tsc",
-    "test": "npm run build && jasmine --config=./jasmine.json",
-    "link": "npm run build && npm link"
+    "build:watch": "tsc -w",
+    "test": "npm run build && jasmine --config=./jasmine.json"
   },
   "keywords": [
     "graphql",

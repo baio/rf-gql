@@ -14,7 +14,8 @@ export type ReaderF<T, R> = Reader<T, Future<R>>;
 * @returns {Future}
 */
 export const ofPromise = (promise: Promise<any>) : Future =>
- pipe(flip, Future)(promise.then.bind(promise));
+  //Future((res, rej) => promise.then(rej, res));
+  pipe(flip, Future)(promise.then.bind(promise));
 
 export type MapFun<T1, T2> = ((x: T1) =>  T2);
 export type MapPromiseFun<T, R> = MapFun<T, Promise<R>>;

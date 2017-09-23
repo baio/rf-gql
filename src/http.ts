@@ -37,7 +37,18 @@ export const requestPromise: RequestPromise = request => {
       qs: request.qs,
       json: true,
       body: request.body
-  }).promise();
+  })
+  .then(
+    res => {
+      console.log(">>> response success", res);
+      return res;
+    },
+    err => {
+      console.log(">>> response err", err);
+      throw err;
+    }
+  );
+
 }
 
 /**
