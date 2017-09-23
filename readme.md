@@ -25,10 +25,20 @@ To use another future  `mapReaderF a:: Reader Future<any, a> -> Reader Future<GQ
 ## Development
 
 + install npm : `npm install`
++ watch / build : `npm start`
 + build : `npm run build`
 + test (+ build) : `npm test`
 + npm link (+ build): `npm run link`
-+ npm publish (+ build + test): `npm run publish`
+
+### Use link in dependent projects
+
++ npm link
++ cd proj
++ npm link rf-gql
++ setup nodemon to watch link npm
+  + update `nodemon.json` to stop ignore node_modules from watch `"ignoreRoot": [".git"],`
+  + add watch /rebuild command to package.json `concurrently \"cross-env NODE_ENV=dev nodemon --watch ./node_modules/rf-gql/dist --watch dist dist/index.js\" \"cross-env NODE_ENV=dev tsc -w\"`
++
 
 ## TODO
 
