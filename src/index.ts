@@ -2,7 +2,7 @@ export *  from "./graphql";
 
 import * as _http from "./http";
 import * as _futureUtils from "./future-utils";
-import * as _utils from "./future-utils";
+import * as _utils from "./utils";
 
 export const http = _http;
 export const futureUtils = _futureUtils;
