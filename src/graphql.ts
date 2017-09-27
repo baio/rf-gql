@@ -4,7 +4,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import { Reader, Future } from "ramda-fantasy";
-import { ofPromise, ReaderF, MapFun, toPromise, runReaderFP, ofReader } from "./future-utils";
+import { ofPromise, ReaderF, MapFun, toPromise, runReaderFP, ofReader, mutateAsk } from "./future-utils";
 import { request, RequestMethods } from "./http";
 
 export interface GQLRequest {
@@ -97,3 +97,27 @@ export const composeContext: ComposeContext = (config: HttpConfig)  => (request:
 export type Resolver = (httpConfig: HttpConfig) => (req: Reader<GQLRequest, Request>) => <R>(reader: ReaderF<GQLRequestContext, R>) => (root, args, context, meta) =>  Promise<R>;
 export const resolver: Resolver = httpConfig => req => readerF =>
   runReaderFP(readerF)(composeContext(httpConfig)(req));
+
+  //gql
+export const mutateAskArgs = f => mutateAsk(R.evolve({ args : f, root: R.always({}), meta: R.always({}) }));
+
+//gql
+export const toHttpReaderF = readerF =>
+  readerF.chain(ReaderF(env => request.run(gql2request(env))));
+
+//gql
+export const createHttpResolver = reader =>
+  R.compose(
+    toPromise,
+    toHttpReaderF(reader),
+    createGQLRequest
+  );
+
+
+export const createTestResolver = reader => f =>
+  R.compose(
+    toPromise,
+    reader.map(gql2request.run).map(f).run,
+    createGQLRequest
+);
+

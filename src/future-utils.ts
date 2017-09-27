@@ -31,8 +31,10 @@ export const mapPromise: (<T, R>(f: MapPromiseFun<T, R>) => ReaderF<T, R>) = f =
  * Given reader and map function, run map function on env and then returns new reader with env from map result.
  * @param f
  */
+/*
 export const reshape = <T1, T2>(f: MapFun<T1, T2>) => (reader: Reader<T1>) : Reader<T2> =>
   Reader(f).map(reader.run);
+*/
 
 /**
  * Given future returns promise.
@@ -55,3 +57,6 @@ export const runReaderFP: RunReaderFP<any, any> = r => f => compose(toPromise, r
 
 export const ofReader = <E, R>(reader: Reader<E, R>): ReaderF<E, R> =>
   ReaderF.ask.map(reader.run);
+
+export const mutateAsk = <T1, T2>(f: MapFun<T1, T2>) => (reader: Reader<T1>) : Reader<T1> =>
+  ReaderF(pipe(f, reader.run));

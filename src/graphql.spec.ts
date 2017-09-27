@@ -1,5 +1,5 @@
 import { Reader, Future } from "ramda-fantasy";
-import { reshape, runReaderFP } from "./future-utils";
+import { runReaderFP } from "./future-utils";
 import {
   gql2request,
   GQLRequestContext,
@@ -8,7 +8,8 @@ import {
   Request,
   composeContext,
   GQLRequest,
-  resolver
+  resolver,
+  createTestResolver
 } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
@@ -16,6 +17,33 @@ import { ReaderF } from "./future-utils"
 import * as R from "ramda";
 
 describe("graphql", () => {
+
+  fit("createTestResolver", () => {
+
+    const f = req => {
+      if (req.url === "http://xxx.ru/api/references/team-member-roles") {
+        return [];
+      } else {``
+        return null;
+      }
+    }
+
+    const reqF = ReaderF.ask.map(gqlRequest => ({
+      config: {providers: { ACADEMIC_TERMS_PLANNING_SERVICE : "http://xxx.ru" }, api: {}},
+      request: {
+        url: `api/references/team-member-roles`,
+        method: "GET",
+        provider: "ACADEMIC_TERMS_PLANNING_SERVICE",
+      },
+      gqlRequest
+    }));
+
+    const resolver = createTestResolver(reqF)(f);
+
+    resolver({}, {}, {}, {}).then(res => expect(res).toEqual([]));
+
+  });
+
   it("map gql2request (qs & heders)", () => {
     const httpConfig: HttpConfig = {
       baseUrl: "https://httpbin.org",

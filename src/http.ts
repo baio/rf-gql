@@ -3,7 +3,7 @@ import { sprintf } from "sprintf-js";
 import { log, cleanObj } from "./utils";
 import * as R from "ramda";
 import {Reader, Future} from "ramda-fantasy";
-import { ofPromise, ReaderF, mapPromise, reshape } from "./future-utils";
+import { ofPromise, ReaderF, mapPromise, mutateAsk } from "./future-utils";
 
 //////
 export interface RequestGet {
@@ -57,7 +57,7 @@ export const requestPromise: RequestPromise = request => {
 export const request = mapPromise<Request, any>(requestPromise).map(Future.cache);
 
 
-const requestMethod = method => reshape(R.merge({ method }))(request);
+const requestMethod = method => mutateAsk(R.merge({ method }))(request);
 export const get: ReaderF<RequestGet, any> = requestMethod("GET");
 export const post: ReaderF<RequestPost, any> = requestMethod("POST");
 export const put: ReaderF<RequestPost, any> = requestMethod("PUT");
