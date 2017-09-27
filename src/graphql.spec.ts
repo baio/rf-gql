@@ -9,7 +9,8 @@ import {
   composeContext,
   GQLRequest,
   resolver,
-  createTestResolver
+  createTestResolver,
+  createHttpResolver
 } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
@@ -18,7 +19,7 @@ import * as R from "ramda";
 
 describe("graphql", () => {
 
-  fit("createTestResolver", () => {
+  it("createTestResolver", () => {
 
     const f = req => {
       if (req.url === "http://xxx.ru/api/references/team-member-roles") {
@@ -43,6 +44,24 @@ describe("graphql", () => {
     resolver({}, {}, {}, {}).then(res => expect(res).toEqual([]));
 
   });
+
+  it("createHttpResolver", () => {
+
+        const reqF = ReaderF.ask.map(gqlRequest => ({
+          config: {providers: { ACADEMIC_TERMS_PLANNING_SERVICE : "https://httpbin.org" }, api: {}},
+          request: {
+            url: `uuid`,
+            method: "GET",
+            provider: "ACADEMIC_TERMS_PLANNING_SERVICE",
+          },
+          gqlRequest
+        }));
+
+        const resolver = createHttpResolver(reqF);
+
+        resolver({}, {}, {}, {}).then(res => expect(res.uuid).toBeTruthy());
+
+      });
 
   it("map gql2request (qs & heders)", () => {
     const httpConfig: HttpConfig = {

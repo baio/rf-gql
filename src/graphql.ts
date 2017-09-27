@@ -98,18 +98,14 @@ export type Resolver = (httpConfig: HttpConfig) => (req: Reader<GQLRequest, Requ
 export const resolver: Resolver = httpConfig => req => readerF =>
   runReaderFP(readerF)(composeContext(httpConfig)(req));
 
-  //gql
-export const mutateAskArgs = f => mutateAsk(R.evolve({ args : f, root: R.always({}), meta: R.always({}) }));
-
 //gql
-export const toHttpReaderF = readerF =>
-  readerF.chain(ReaderF(env => request.run(gql2request(env))));
+export const mutateAskArgs = f => mutateAsk(R.evolve({ args : f, root: R.always({}), meta: R.always({}) }));
 
 //gql
 export const createHttpResolver = reader =>
   R.compose(
     toPromise,
-    toHttpReaderF(reader),
+    reader.chain(x => mutateAsk(_ => gql2request.run(x))(request)).run,
     createGQLRequest
   );
 
