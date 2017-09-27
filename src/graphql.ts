@@ -101,22 +101,16 @@ export const resolver: Resolver = httpConfig => req => readerF =>
 //gql
 export const mutateAskArgs = f => mutateAsk(R.evolve({ args : f, root: R.always({}), meta: R.always({}) }));
 
-//gql
-export const gqlHttpRequest = gqlContext =>
-  mutateAsk(_ => gql2request.run(gqlContext))(request);
+const mutateGql2Request = readerF => gqlContext => mutateAsk(_ => gql2request.run(gqlContext))(readerF);
 
-export const createHttpResolver = reader =>
+//gql
+export const gqlHttpRequest = mutateGql2Request(request);
+
+export const gqlMockRequest = f => mutateGql2Request(ReaderF.ask.map(f));
+
+export const createResolver = reader =>
   R.compose(
     toPromise,
-    /*reader.chain(gqlHttpRequest)*/reader.run,
+    reader.run,
     createGQLRequest
   );
-
-
-export const createTestResolver = reader => f =>
-  R.compose(
-    toPromise,
-    reader.map(gql2request.run).map(f).run,
-    createGQLRequest
-);
-

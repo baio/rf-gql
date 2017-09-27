@@ -9,9 +9,9 @@ import {
   composeContext,
   GQLRequest,
   resolver,
-  createTestResolver,
-  createHttpResolver,
-  gqlHttpRequest
+  createResolver,
+  gqlHttpRequest,
+  gqlMockRequest
 } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
@@ -40,7 +40,7 @@ describe("graphql", () => {
       gqlRequest
     }));
 
-    const resolver = createTestResolver(reqF)(f);
+    const resolver = createResolver(reqF.chain(gqlMockRequest(f)));
 
     resolver({}, {}, {}, {}).then(res => expect(res).toEqual([]));
 
@@ -58,7 +58,7 @@ describe("graphql", () => {
           gqlRequest
         }));
 
-        const resolver = createHttpResolver(reqF.chain(gqlHttpRequest));
+        const resolver = createResolver(reqF.chain(gqlHttpRequest));
 
         resolver({}, {}, {}, {}).then(res => expect(res.uuid).toBeTruthy());
 
