@@ -102,10 +102,13 @@ export const resolver: Resolver = httpConfig => req => readerF =>
 export const mutateAskArgs = f => mutateAsk(R.evolve({ args : f, root: R.always({}), meta: R.always({}) }));
 
 //gql
+export const gqlHttpRequest = gqlContext =>
+  mutateAsk(_ => gql2request.run(gqlContext))(request);
+
 export const createHttpResolver = reader =>
   R.compose(
     toPromise,
-    reader.chain(x => mutateAsk(_ => gql2request.run(x))(request)).run,
+    /*reader.chain(gqlHttpRequest)*/reader.run,
     createGQLRequest
   );
 

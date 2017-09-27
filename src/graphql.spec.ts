@@ -10,7 +10,8 @@ import {
   GQLRequest,
   resolver,
   createTestResolver,
-  createHttpResolver
+  createHttpResolver,
+  gqlHttpRequest
 } from "./graphql";
 import { request, Request as HttpRequest } from "./http";
 import { log, fmerge } from "./utils";
@@ -57,7 +58,7 @@ describe("graphql", () => {
           gqlRequest
         }));
 
-        const resolver = createHttpResolver(reqF);
+        const resolver = createHttpResolver(reqF.chain(gqlHttpRequest));
 
         resolver({}, {}, {}, {}).then(res => expect(res.uuid).toBeTruthy());
 
