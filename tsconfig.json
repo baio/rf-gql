@@ -6,7 +6,8 @@
         "noImplicitAny": false,
         "sourceMap": false,
         "moduleResolution": "node",
-        "outDir": "dist",
+        "outDir": "./dist",
+        "rootDir": "./src",
         "lib": ["es2017"],
         "typeRoots": [
             "./node_modules/@types"
@@ -14,6 +15,7 @@
         "types": [
             "node",
             "jasmine"
-          ]
-    }
+        ]
+    },
+    "exclude": [ "node_modules", "dist" ]
 }

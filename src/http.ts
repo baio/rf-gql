@@ -29,27 +29,15 @@ export type RequestPromise = (request: Request) => Promise<any>;
  *
  * @param {Request} request
  */
-export const requestPromise: RequestPromise = request => {
-  console.log(">>> request", request);
-  return req(request.url, {
+export const requestPromise: RequestPromise = request =>
+  req(request.url, {
       method: request.method,
       headers: request.headers,
       qs: request.qs,
       json: true,
       body: request.body
-  })
-  .then(
-    res => {
-      console.log(">>> response success", res);
-      return res;
-    },
-    err => {
-      console.log(">>> response err", err);
-      throw err;
-    }
-  );
+  });
 
-}
 
 /**
  * Reader<Request, Future<any, any>>

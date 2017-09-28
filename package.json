@@ -24,6 +24,7 @@
     "ramda-fantasy": "^0.8.0",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
+    "sentencer": "^0.1.5",
     "sprintf-js": "^1.1.1",
     "url-join": "^2.0.2"
   },
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@types/node": "^8.0.31",
     "jasmine": "^2.8.0",
-    "np": "^2.16.0"
+    "np": "^2.16.0",
+    "typescript": "^2.5.3"
   }
 }
