@@ -37,6 +37,7 @@ export interface HttpConfig {
 
 export interface ResolverSession {
   id: string;
+  tag?: string|null;
 }
 
 export interface LogArgs {
