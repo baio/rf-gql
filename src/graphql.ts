@@ -214,3 +214,5 @@ export const setGqlRequest = R.curry((a, ctx) => updGqlRequest(R.always(a), ctx,
 export const chainResult = f => rF => res => ReaderF.ask.chain(ctx => Reader.of(rF(updGqlRequest(f, ctx, res))));
 
 export const chainWithArgs = fr => args => ReaderF(R.pipe(setGqlRequest(args), fr));
+
+export const runWithArgs  = fr => env => args =>  chainWithArgs(fr)(args).run(env);
