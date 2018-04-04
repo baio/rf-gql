@@ -1,4 +1,4 @@
-import { pipe, flip, compose, curry, prop } from "ramda";
+import { pipe, flip, compose, curry, prop, memoize } from "ramda";
 import { Reader, Future } from "ramda-fantasy";
 
 /**
@@ -60,3 +60,30 @@ export const ofReader = <E, R>(reader: Reader<E, R>): ReaderF<E, R> =>
 
 export const mutateAsk = <T1, T2>(f: MapFun<T1, T2>) => (reader: Reader<T1>) : Reader<T1> =>
   ReaderF(pipe(f, reader.run));
+
+ReaderF.prototype.chainReject = function (f: MapFun<any, any>) {
+  const m = this;
+  return ReaderF(ctx => m.run(ctx).chainReject(f));
+}
+
+const memoizeSingle = f => fun => {
+  let memo: [any, any]|null;
+  return (x) => {
+    const rf = f(x);
+    if (memo && memo[0] === rf) {
+      return memo[1];
+    } else {
+      let res = fun(x);
+      memo = [rf, res];
+      return res;
+    }
+  }
+}
+
+export const cacheRF = <E, T>(f: ((x: E) => any)) => (rf: ReaderF<E, T>): ReaderF<E, T> => ReaderF(
+  memoizeSingle(f)(context =>
+    Future.cache(rf.run(context))
+  )
+);
+
+

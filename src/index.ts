@@ -17,7 +17,8 @@ export {
 } from "./http";
 
 export {
-  ReaderF
+  ReaderF,
+  cacheRF
 } from "./future-utils";
 
 

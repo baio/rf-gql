@@ -1,6 +1,6 @@
 {
   "name": "rf-gql",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1652,16 +1652,16 @@
       "integrity": "sha1-E+JtKK1rD/qpExLNO/cI7TUecjM="
     },
     "ramda": {
-      "version": "0.24.1",
-      "resolved": "https://registry.npmjs.org/ramda/-/ramda-0.24.1.tgz",
-      "integrity": "sha1-w7d1UZfzW43DUCIoJixMkd22uFc="
+      "version": "0.25.0",
+      "resolved": "https://registry.npmjs.org/ramda/-/ramda-0.25.0.tgz",
+      "integrity": "sha512-GXpfrYVPwx3K7RQ6aYT8KPS8XViSXUVJT1ONhoKPE9VAleW42YE+U+8VEyGWt41EnEQW7gwecYJriTI0pKoecQ=="
     },
     "ramda-fantasy": {
       "version": "0.8.0",
       "resolved": "https://registry.npmjs.org/ramda-fantasy/-/ramda-fantasy-0.8.0.tgz",
       "integrity": "sha1-now32T7ApweWz8EIc92cUIUDkPY=",
       "requires": {
-        "ramda": "0.24.1"
+        "ramda": "0.25.0"
       }
     },
     "randy": {

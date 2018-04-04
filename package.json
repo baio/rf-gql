@@ -20,7 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/jasmine": "^2.5.54",
-    "ramda": "^0.24.1",
+    "ramda": "^0.25.0",
     "ramda-fantasy": "^0.8.0",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
